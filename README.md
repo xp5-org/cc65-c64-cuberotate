@@ -1,4 +1,4 @@
-3d cube rotation using the TGI graphics library in CC64 on the C64 . its about 90% complete, there is an error and collapses the shape when it resets and crosses over
+3d cube rotation using the TGI graphics library in CC65 on the C64 . its about 90% complete, there is an error and collapses the shape when it resets and crosses over
 
 https://8bitworkshop.com/v3.11.0/?repo=xp5-org%2Fcc65-c64-cuberotate&platform=c64&file=cuberotate.c
 
