@@ -2,7 +2,7 @@
 #include <cc65.h>
 #include <modload.h>
 #include <tgi.h> 
-#include <conio.h> 
+#include <conio.h>  // Needed for text output to the C64 screen
 #include <string.h>
 
 
@@ -108,6 +108,7 @@ const unsigned short alphabet[40][4] = {
 };
 
 
+
 int findcharindex(char character) {
     // only supports uppercase A-Z, digits 0-9, comma, period, and forward slash
     if (character >= 'A' && character <= 'Z') {
@@ -124,6 +125,7 @@ int findcharindex(char character) {
         return -1; // Not found in the array
     }
 }
+
 
 void drawchar(char character, unsigned int startX, unsigned char startY) {
     int fontwidth = 4;
@@ -152,6 +154,9 @@ void drawchar(char character, unsigned int startX, unsigned char startY) {
         return;
 }
 
+
+
+
 void drawstring(const char* str, 
                 unsigned int startX, 
                 unsigned char startY) {
@@ -179,7 +184,7 @@ void drawWrappedString(const char* text,
                  fontwidth = 5;
                  fontheight = 5;
 
-        if (*text == ' ') { //if the current char is a space ump 6 pixels on Y axis
+        if (*text == ' ') { //if the current char is a space we jump 6 pixels on Y axis
             currentWordCopy[currentLength] = '\0'; // Null-terminate the string
             if (currentLineStartX + (currentLength * fontwidth) > startX + maxLineLength * fontwidth ) {
                 // If adding the current word would exceed maxLineLength, start a new line
@@ -197,9 +202,9 @@ void drawWrappedString(const char* text,
         text+=1;
     }
 
-    // draw the last word if needed
+    // Draw the last word if needed
     if (currentLength > 0) {
-        currentWordCopy[currentLength] = '\0'; // null-terminate 
+        currentWordCopy[currentLength] = '\0'; // Null-terminate the string
         if (currentLineStartX + (currentLength * 7 ) > startX + maxLineLength * 7) {
            //  If adding the last word would exceed maxLineLength, start a new line
             startY += 7;
@@ -320,8 +325,8 @@ void draw_cube() {
 
 
 void itoa_custom(int num, char* str) {
-    int i = 0, rem;
-    int start, end;
+    int i = 0, rem;    // Declare variables at the beginning
+    int start, end;    // Declare start and end here as well
 
     if (num == 0) {
         str[i++] = '0';
@@ -352,11 +357,12 @@ void itoa_custom(int num, char* str) {
 
 
 char* msgcat(char* message, int num) {
-    static char result[40];
+    static char result[40];  // Ensure enough space to hold the result
     int i = 0;
     char snum[10];
     int j = 0;
 
+    // Convert the integer to string
     itoa_custom(num, snum);
 
     // Copy the message string to result
@@ -375,12 +381,6 @@ char* msgcat(char* message, int num) {
 }
 
 
-void delay_loop(unsigned long count) {
-    while (count--) {
-        // prevent compiler from optimizing this away
-        asm("nop");
-    }
-}
 
 
 
@@ -401,6 +401,7 @@ int main() {
     tgi_clear();
   
 tgi_setcolor (COLOR_WHITE);
+
   
     rotX = 15;  
     rotY = 110;
@@ -415,7 +416,11 @@ drawWrappedString(newoutput, 20, 200, 156);
   
   
       while (1) {
-        
+        if (toggle_clear == 1) {
+          Border = bordercolor (COLOR_BLUE);
+          //tgi_clear();
+              drawWrappedString(mystring1, 20, 200, 14); 
+        }
         
         ninecount += 1;
         
@@ -432,9 +437,9 @@ drawWrappedString(newoutput, 20, 200, 156);
 
 
         if (kbhit()) {
-          //tgi_clear();
-        ch = cgetc();  // call cgetc if a key has been pressed
-                  if (ch) { 
+          tgi_clear();
+        ch = cgetc();  // Only call cgetc if a key has been pressed
+                  if (ch == ' ') { 
             toggle_clear = !toggle_clear;
                     
         }
@@ -459,14 +464,14 @@ drawWrappedString(newoutput, 20, 200, 156);
   
 
 }
-    if (rotY >= 359) {
-	rotY = 0;
-	rotZ += 15;
-	tgi_clear(); 
+if (rotY >= 359) {
+rotY = 0;
+rotZ += 15;
+//tgi_clear();  // Call tgi_clear() here
 }
 if (rotZ >= 359) {
     rotZ = 0;
-    tgi_clear();  
+//    tgi_clear();  // Call tgi_clear() here
 }
 tgi_setcolor (COLOR_BLACK);
 tgi_bar(260,144,280,147);
@@ -476,15 +481,6 @@ drawWrappedString(newoutput, 20, 200, 144);
         
         
         draw_cube();
-        
-        
-  if (toggle_clear == 1) {
-		Border = bordercolor (COLOR_BLUE);
-		delay_loop(15000);
-          
-          tgi_clear();
-              drawWrappedString(mystring1, 20, 200, 14); 
-        }
       }
  
 
